@@ -3,6 +3,7 @@
     <input
       type="text"
       class="form-control"
+      placeholder="Enter your name"
       ref="input"
       :maxlength="32"
       v-model.trim="userName"
