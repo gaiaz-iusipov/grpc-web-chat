@@ -1,0 +1,19 @@
+FROM golang:1-alpine
+RUN apk add --no-cache git
+RUN addgroup -g 1000 app && \
+    adduser -u 1000 -G app -h /home/app -s /bin/sh -D app
+RUN set -eux \
+    && mkdir /app \
+    && chown app:app /app
+WORKDIR /app
+RUN set -eux \
+    && USER=app \
+    && GROUP=app \
+    && apk add --virtual virtual curl \
+    && curl -SsL https://github.com/boxboat/fixuid/releases/download/v0.4/fixuid-0.4-linux-amd64.tar.gz | tar -C /usr/local/bin -xzf - \
+    && apk del virtual \
+    && chown root:root /usr/local/bin/fixuid \
+    && chmod 4755 /usr/local/bin/fixuid \
+    && mkdir -p /etc/fixuid \
+    && printf "user: $USER\ngroup: $GROUP\n" > /etc/fixuid/config.yml
+ENV GOFLAGS=-mod=vendor

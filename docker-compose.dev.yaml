@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile-dev
+    user: ${FIXUID:-1000}:${FIXGID:-1000}
+    volumes:
+      - ./backend:/app:rw
+    entrypoint: fixuid
+    command: tail -f /dev/null
+
+  envoy:
+    build:
+      context: envoy
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile-dev
+    user: ${FIXUID:-1000}:${FIXGID:-1000}
+    ports:
+      - 80:3000
+    volumes:
+      - ./frontend:/app:rw
+    entrypoint: fixuid
+    command: tail -f /dev/null

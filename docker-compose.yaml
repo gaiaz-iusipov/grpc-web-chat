@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: backend
+
+  envoy:
+    build:
+      context: envoy
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+
+  frontend:
+    build:
+      context: frontend
+    ports:
+      - 80:3000
