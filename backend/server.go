@@ -37,15 +37,11 @@ func (s *Server) Subscribe(client *proto.Client, cs proto.Chat_SubscribeServer) 
 	return nil
 }
 
-func (s *Server) AddMessage(ctx context.Context, req *proto.Message) (*empty.Empty, error) {
-	log.Debugf("received a new message: %s", req.Text)
-	message := &proto.Message{
-		Author: req.Author,
-		Text:   req.Text,
-	}
+func (s *Server) AddMessage(ctx context.Context, message *proto.Message) (*empty.Empty, error) {
+	log.Debugf("received a new message: %s", message.Text)
 
 	for clientId, channel := range s.channels {
-		if clientId == req.Client.Id {
+		if clientId == message.Client.Id {
 			continue
 		}
 
