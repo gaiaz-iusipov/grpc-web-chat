@@ -2,21 +2,21 @@ package main
 
 import (
 	"fmt"
-	proto "github.com/gaiaz-iusipov/grpc-web-chat/chat"
+	"net"
+
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"net"
+
+	proto "github.com/gaiaz-iusipov/grpc-web-chat/chat"
 )
 
 const (
 	port = 3000
 )
 
-func init() {
-	log.SetLevel(log.DebugLevel)
-}
-
 func main() {
+	log.SetLevel(log.DebugLevel)
+
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

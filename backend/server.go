@@ -1,10 +1,11 @@
 package main
 
 import (
-	proto "github.com/gaiaz-iusipov/grpc-web-chat/chat"
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
+
+	proto "github.com/gaiaz-iusipov/grpc-web-chat/chat"
 )
 
 type Server struct {
@@ -40,8 +41,8 @@ func (s *Server) Subscribe(client *proto.Client, cs proto.Chat_SubscribeServer) 
 func (s *Server) AddMessage(ctx context.Context, message *proto.Message) (*empty.Empty, error) {
 	log.Debugf("received a new message: %s", message.Text)
 
-	for clientId, channel := range s.channels {
-		if clientId == message.Client.Id {
+	for clientID, channel := range s.channels {
+		if clientID == message.Client.Id {
 			continue
 		}
 
