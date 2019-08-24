@@ -2,9 +2,8 @@
 
 ## Usage
 
-```bash 
-docker-compose pull
-docker-compose up -d
+```bash
+docker-compose up
 ```
 
 Open several browser tabs, and go to `http://localhost`
