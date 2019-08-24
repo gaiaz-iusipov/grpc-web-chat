@@ -1,5 +1,8 @@
 FROM golang:1-alpine
-RUN apk add --no-cache git
+RUN apk add --no-cache git gcc libc-dev
+RUN set -eux \
+    && wget -O - -q https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.17.1 \
+    && golangci-lint --version
 RUN addgroup -g 1000 app && \
     adduser -u 1000 -G app -h /home/app -s /bin/sh -D app
 RUN set -eux \
