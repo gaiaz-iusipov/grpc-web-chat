@@ -11,14 +11,5 @@ RUN set -eux \
     && yarn build \
     && yarn cache clean
 
-FROM node:10-alpine
-RUN yarn global add serve
-RUN set -eux \
-    && mkdir /dist \
-    && chown node:node /dist
-WORKDIR /dist
-USER node
-COPY --from=builder --chown=node /app/dist/ .
-ENV PORT=3000
-EXPOSE $PORT
-CMD ["serve", "-s", "."]
+FROM nginx:1.17-alpine
+COPY --from=builder /app/dist/ /usr/share/nginx/html
