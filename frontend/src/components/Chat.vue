@@ -1,6 +1,8 @@
 <template>
   <div class="card">
-    <div class="card-header">gRPC-Web Chat</div>
+    <div class="card-header">
+      <img alt="gRPC" src="@/assets/grpc.svg"> Web Chat
+    </div>
     <div class="card-body">
       <message-view
         v-for="(message, index) in messages"
