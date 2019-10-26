@@ -21,11 +21,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	defer func() {
-		if err := lis.Close(); err != nil {
-			log.Fatalf("failed to close: %v", err)
-		}
-	}()
+	defer lis.Close()
 
 	server := grpc.NewServer()
 	proto.RegisterChatServer(server, NewServer())

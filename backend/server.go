@@ -13,22 +13,19 @@ type Server struct {
 }
 
 func NewServer() *Server {
-	server := new(Server)
-	server.channels = make(map[string]chan *proto.Message)
-
-	return server
+	return &Server{
+		channels: make(map[string]chan *proto.Message),
+	}
 }
 
-func (s *Server) Subscribe(client *proto.Client, cs proto.Chat_SubscribeServer) error {
+func (server *Server) Subscribe(client *proto.Client, cs proto.Chat_SubscribeServer) error {
 	channel := make(chan *proto.Message)
-	s.channels[client.Id] = channel
+	server.channels[client.Id] = channel
 	log.Debugf("added a new channel: %s", client.Id)
 
 	for message := range channel {
-		log.Debug("retrieved a message from a channel")
-
 		if err := cs.Send(message); err != nil {
-			delete(s.channels, client.Id)
+			delete(server.channels, client.Id)
 			log.Debugf("removed a channel: %s", client.Id)
 
 			break
@@ -38,10 +35,10 @@ func (s *Server) Subscribe(client *proto.Client, cs proto.Chat_SubscribeServer) 
 	return nil
 }
 
-func (s *Server) AddMessage(ctx context.Context, message *proto.Message) (*empty.Empty, error) {
+func (server *Server) AddMessage(ctx context.Context, message *proto.Message) (*empty.Empty, error) {
 	log.Debugf("received a new message: %s", message.Text)
 
-	for clientID, channel := range s.channels {
+	for clientID, channel := range server.channels {
 		if clientID == message.Client.Id {
 			continue
 		}
