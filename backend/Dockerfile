@@ -1,4 +1,4 @@
-FROM golang:stretch as builder
+FROM golang:1.13-stretch as builder
 WORKDIR /app/src
 COPY . .
 RUN set -eux \
