@@ -8,7 +8,7 @@ USER node
 COPY --chown=node . .
 RUN set -eux \
     && yarn install \
-    && yarn run build \
+    && yarn build \
     && yarn cache clean
 
 FROM node:10-alpine
