@@ -1,4 +1,4 @@
-FROM golang:1.13-alpine
+FROM golang:1.14-alpine
 RUN apk add --no-cache git gcc libc-dev
 RUN set -eux \
     && wget -O - -q https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.21.0 \
@@ -17,4 +17,3 @@ RUN set -eux \
     && chmod 4755 /usr/local/bin/fixuid \
     && mkdir -p /etc/fixuid \
     && printf "user: $USER\ngroup: $GROUP\n" > /etc/fixuid/config.yml
-ENV GOFLAGS=-mod=vendor
