@@ -26,6 +26,8 @@ services:
     user: ${FIXUID:-1000}:${FIXGID:-1000}
     ports:
       - 80:3000
+    depends_on:
+      - envoy
     volumes:
       - ./frontend:/app:rw
     entrypoint: fixuid
