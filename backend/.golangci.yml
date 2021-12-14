@@ -1,7 +1,0 @@
-linters-settings:
-  goimports:
-    local-prefixes: github.com/gaiaz-iusipov/grpc-web-chat
-linters:
-  enable-all: true
-run:
-  modules-download-mode: vendor

@@ -2,13 +2,10 @@ version: '3'
 
 services:
   backend:
-    build:
-      context: backend
-      dockerfile: Dockerfile-dev
-    user: ${FIXUID:-1000}:${FIXGID:-1000}
+    image: 'golang:1.17'
+    working_dir: /go/src/app
     volumes:
-      - ./backend:/app:rw
-    entrypoint: fixuid
+      - ./backend:/go/src/app:rw
     command: tail -f /dev/null
 
   envoy:
