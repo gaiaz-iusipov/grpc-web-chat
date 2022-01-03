@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
-	proto "github.com/gaiaz-iusipov/grpc-web-chat/chat"
+	proto "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat"
 )
 
 const (

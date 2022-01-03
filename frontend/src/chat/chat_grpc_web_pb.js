@@ -7,6 +7,10 @@
 // GENERATED CODE -- DO NOT EDIT!
 
 
+/* eslint-disable */
+// @ts-nocheck
+
+
 
 const grpc = {};
 grpc.web = require('grpc-web');
@@ -19,7 +23,7 @@ proto.chat = require('./chat_pb.js');
 /**
  * @param {string} hostname
  * @param {?Object} credentials
- * @param {?Object} options
+ * @param {?grpc.web.ClientOptions} options
  * @constructor
  * @struct
  * @final
@@ -27,7 +31,7 @@ proto.chat = require('./chat_pb.js');
 proto.chat.ChatClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
-  options['format'] = 'text';
+  options.format = 'text';
 
   /**
    * @private @const {!grpc.web.GrpcWebClientBase} The client
@@ -39,23 +43,13 @@ proto.chat.ChatClient =
    */
   this.hostname_ = hostname;
 
-  /**
-   * @private @const {?Object} The credentials to be used to connect
-   *    to the server
-   */
-  this.credentials_ = credentials;
-
-  /**
-   * @private @const {?Object} Options for the client
-   */
-  this.options_ = options;
 };
 
 
 /**
  * @param {string} hostname
  * @param {?Object} credentials
- * @param {?Object} options
+ * @param {?grpc.web.ClientOptions} options
  * @constructor
  * @struct
  * @final
@@ -63,26 +57,36 @@ proto.chat.ChatClient =
 proto.chat.ChatPromiseClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
-  options['format'] = 'text';
+  options.format = 'text';
 
   /**
-   * @private @const {!proto.chat.ChatClient} The delegate callback based client
+   * @private @const {!grpc.web.GrpcWebClientBase} The client
    */
-  this.delegateClient_ = new proto.chat.ChatClient(
-      hostname, credentials, options);
+  this.client_ = new grpc.web.GrpcWebClientBase(options);
+
+  /**
+   * @private @const {string} The hostname
+   */
+  this.hostname_ = hostname;
 
 };
 
 
 /**
  * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.chat.Client,
  *   !proto.chat.Message>}
  */
-const methodInfo_Chat_Subscribe = new grpc.web.AbstractClientBase.MethodInfo(
+const methodDescriptor_Chat_Subscribe = new grpc.web.MethodDescriptor(
+  '/chat.Chat/Subscribe',
+  grpc.web.MethodType.SERVER_STREAMING,
+  proto.chat.Client,
   proto.chat.Message,
-  /** @param {!proto.chat.Client} request */
+  /**
+   * @param {!proto.chat.Client} request
+   * @return {!Uint8Array}
+   */
   function(request) {
     return request.serializeBinary();
   },
@@ -92,7 +96,7 @@ const methodInfo_Chat_Subscribe = new grpc.web.AbstractClientBase.MethodInfo(
 
 /**
  * @param {!proto.chat.Client} request The request proto
- * @param {!Object<string, string>} metadata User defined
+ * @param {?Object<string, string>=} metadata User defined
  *     call metadata
  * @return {!grpc.web.ClientReadableStream<!proto.chat.Message>}
  *     The XHR Node Readable Stream
@@ -102,37 +106,43 @@ proto.chat.ChatClient.prototype.subscribe =
   return this.client_.serverStreaming(this.hostname_ +
       '/chat.Chat/Subscribe',
       request,
-      metadata,
-      methodInfo_Chat_Subscribe);
+      metadata || {},
+      methodDescriptor_Chat_Subscribe);
 };
 
 
 /**
  * @param {!proto.chat.Client} request The request proto
- * @param {!Object<string, string>} metadata User defined
+ * @param {?Object<string, string>=} metadata User defined
  *     call metadata
  * @return {!grpc.web.ClientReadableStream<!proto.chat.Message>}
  *     The XHR Node Readable Stream
  */
 proto.chat.ChatPromiseClient.prototype.subscribe =
     function(request, metadata) {
-  return this.delegateClient_.client_.serverStreaming(this.delegateClient_.hostname_ +
+  return this.client_.serverStreaming(this.hostname_ +
       '/chat.Chat/Subscribe',
       request,
-      metadata,
-      methodInfo_Chat_Subscribe);
+      metadata || {},
+      methodDescriptor_Chat_Subscribe);
 };
 
 
 /**
  * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.chat.Message,
  *   !proto.google.protobuf.Empty>}
  */
-const methodInfo_Chat_AddMessage = new grpc.web.AbstractClientBase.MethodInfo(
+const methodDescriptor_Chat_AddMessage = new grpc.web.MethodDescriptor(
+  '/chat.Chat/AddMessage',
+  grpc.web.MethodType.UNARY,
+  proto.chat.Message,
   google_protobuf_empty_pb.Empty,
-  /** @param {!proto.chat.Message} request */
+  /**
+   * @param {!proto.chat.Message} request
+   * @return {!Uint8Array}
+   */
   function(request) {
     return request.serializeBinary();
   },
@@ -143,9 +153,9 @@ const methodInfo_Chat_AddMessage = new grpc.web.AbstractClientBase.MethodInfo(
 /**
  * @param {!proto.chat.Message} request The
  *     request proto
- * @param {!Object<string, string>} metadata User defined
+ * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.google.protobuf.Empty)}
+ * @param {function(?grpc.web.RpcError, ?proto.google.protobuf.Empty)}
  *     callback The callback function(error, response)
  * @return {!grpc.web.ClientReadableStream<!proto.google.protobuf.Empty>|undefined}
  *     The XHR Node Readable Stream
@@ -155,8 +165,8 @@ proto.chat.ChatClient.prototype.addMessage =
   return this.client_.rpcCall(this.hostname_ +
       '/chat.Chat/AddMessage',
       request,
-      metadata,
-      methodInfo_Chat_AddMessage,
+      metadata || {},
+      methodDescriptor_Chat_AddMessage,
       callback);
 };
 
@@ -164,19 +174,18 @@ proto.chat.ChatClient.prototype.addMessage =
 /**
  * @param {!proto.chat.Message} request The
  *     request proto
- * @param {!Object<string, string>} metadata User defined
+ * @param {?Object<string, string>=} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.google.protobuf.Empty>}
- *     The XHR Node Readable Stream
+ *     Promise that resolves to the response
  */
 proto.chat.ChatPromiseClient.prototype.addMessage =
     function(request, metadata) {
-  return new Promise((resolve, reject) => {
-    this.delegateClient_.addMessage(
-      request, metadata, (error, response) => {
-        error ? reject(error) : resolve(response);
-      });
-  });
+  return this.client_.unaryCall(this.hostname_ +
+      '/chat.Chat/AddMessage',
+      request,
+      metadata || {},
+      methodDescriptor_Chat_AddMessage);
 };
 
 

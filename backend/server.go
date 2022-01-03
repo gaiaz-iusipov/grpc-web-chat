@@ -5,12 +5,15 @@ import (
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 
-	proto "github.com/gaiaz-iusipov/grpc-web-chat/chat"
+	proto "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat"
 )
 
 type Server struct {
+	proto.UnimplementedChatServer
 	channels map[string]chan *proto.Message
 }
+
+var _ proto.ChatServer = (*Server)(nil)
 
 func NewServer() *Server {
 	return &Server{
