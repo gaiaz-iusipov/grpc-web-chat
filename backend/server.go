@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	proto "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat"
 )
@@ -38,7 +38,7 @@ func (server *Server) Subscribe(client *proto.Client, cs proto.Chat_SubscribeSer
 	return nil
 }
 
-func (server *Server) AddMessage(ctx context.Context, message *proto.Message) (*empty.Empty, error) {
+func (server *Server) AddMessage(_ context.Context, message *proto.Message) (*emptypb.Empty, error) {
 	log.Debugf("received a new message: %s", message.Text)
 
 	for clientID, channel := range server.channels {
@@ -49,5 +49,5 @@ func (server *Server) AddMessage(ctx context.Context, message *proto.Message) (*
 		channel <- message
 	}
 
-	return &empty.Empty{}, nil
+	return &emptypb.Empty{}, nil
 }
