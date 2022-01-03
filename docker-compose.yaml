@@ -4,6 +4,8 @@ services:
   backend:
     build:
       context: backend
+    ports:
+      - '6060:6060/tcp'
 
   envoy:
     build:
