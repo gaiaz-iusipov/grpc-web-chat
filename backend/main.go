@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 
 	proto "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat"
@@ -15,18 +15,17 @@ const (
 )
 
 func main() {
-	log.SetLevel(log.DebugLevel)
-
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatal().Err(err).Msg("net.Listen()")
 	}
 	defer lis.Close()
 
 	server := grpc.NewServer()
 	proto.RegisterChatServer(server, NewServer())
 
-	if err := server.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+	err = server.Serve(lis)
+	if err != nil {
+		log.Fatal().Err(err).Msg("server.Serve()")
 	}
 }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/net/context"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -24,13 +24,12 @@ func NewServer() *Server {
 func (server *Server) Subscribe(client *proto.Client, cs proto.Chat_SubscribeServer) error {
 	channel := make(chan *proto.Message)
 	server.channels[client.Id] = channel
-	log.Debugf("added a new channel: %s", client.Id)
+	log.Debug().Str("client_uuid", client.Id).Msg("client subscribed")
 
 	for message := range channel {
 		if err := cs.Send(message); err != nil {
 			delete(server.channels, client.Id)
-			log.Debugf("removed a channel: %s", client.Id)
-
+			log.Debug().Str("client_uuid", client.Id).Msg("client unsubscribed")
 			break
 		}
 	}
@@ -39,7 +38,7 @@ func (server *Server) Subscribe(client *proto.Client, cs proto.Chat_SubscribeSer
 }
 
 func (server *Server) AddMessage(_ context.Context, message *proto.Message) (*emptypb.Empty, error) {
-	log.Debugf("received a new message: %s", message.Text)
+	log.Debug().Str("message_text", message.Text).Msg("message received")
 
 	for clientID, channel := range server.channels {
 		if clientID == message.Client.Id {
