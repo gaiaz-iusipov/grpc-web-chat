@@ -15,6 +15,7 @@ services:
       context: envoy
     ports:
       - '3000:3000/tcp'
+      - '9901:9901/tcp'
     depends_on:
       - backend
 
