@@ -10,7 +10,10 @@ import (
 )
 
 func (s *Service) AddMessage(_ context.Context, message *proto.Message) (*emptypb.Empty, error) {
-	log.Debug().Str("message_text", message.Text).Msg("message received")
+	log.Debug().
+		Str("client_uuid", message.Client.Id).
+		Str("message_text", message.Text).
+		Msg("message received")
 
 	for clientID, channel := range s.channels {
 		if clientID == message.Client.Id {
