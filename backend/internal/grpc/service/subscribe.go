@@ -6,15 +6,25 @@ import (
 	proto "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat"
 )
 
-func (s *Service) Subscribe(client *proto.Client, cs proto.Chat_SubscribeServer) error {
+func (s *Service) Subscribe(req *proto.SubscribeRequest, respSender proto.Chat_SubscribeServer) error {
+	clientUUID := req.GetClientUuid()
+
 	channel := make(chan *proto.Message)
-	s.channels[client.Id] = channel
-	log.Debug().Str("client_uuid", client.Id).Msg("client subscribed")
+	s.channels[clientUUID] = channel
+
+	log.Debug().
+		Str("client_uuid", clientUUID).
+		Msg("client subscribed")
 
 	for message := range channel {
-		if err := cs.Send(message); err != nil {
-			delete(s.channels, client.Id)
-			log.Debug().Str("client_uuid", client.Id).Msg("client unsubscribed")
+		err := respSender.Send(&proto.SubscribeResponse{
+			Message: message,
+		})
+		if err != nil {
+			delete(s.channels, clientUUID)
+			log.Debug().
+				Str("client_uuid", clientUUID).
+				Msg("client unsubscribed")
 			break
 		}
 	}

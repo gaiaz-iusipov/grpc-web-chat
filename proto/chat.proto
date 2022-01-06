@@ -4,19 +4,32 @@ package chat;
 
 option go_package = "pkg/chat;chat";
 
-import "google/protobuf/empty.proto";
-
 service Chat {
-  rpc Subscribe (Client) returns (stream Message) {}
-  rpc AddMessage (Message) returns (google.protobuf.Empty) {}
+  rpc Subscribe (SubscribeRequest) returns (stream SubscribeResponse);
+  rpc AddMessage (AddMessageRequest) returns (AddMessageResponse);
+}
+
+message SubscribeRequest {
+  string client_uuid = 1;
 }
 
 message Client {
-  string id = 1;
+  string uuid = 1;
+  string name = 2;
 }
 
 message Message {
   Client client = 1;
-  string author = 2;
   string text = 3;
+}
+
+message SubscribeResponse {
+  Message message = 1;
+}
+
+message AddMessageRequest {
+  Message message = 1;
+}
+
+message AddMessageResponse {
 }
