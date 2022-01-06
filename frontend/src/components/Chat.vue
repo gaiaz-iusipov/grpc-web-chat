@@ -1,16 +1,17 @@
 <template>
-  <div class="card">
+  <div class="card vh-100">
     <div class="card-header">
       <img alt="gRPC" src="@/assets/grpc.svg"> Web Chat
     </div>
-    <div class="card-body">
+    <div class="card-body overflow-scroll">
       <message-view
         v-for="(message, index) in messages"
         :key="index"
         :message="message"
         :class="index > 0 && 'mt-3'"
       />
-      <p class="card-text" v-if="0 === messages.length">No Messages yet</p>
+      <p class="card-text" v-if="!messages.length">No Messages yet</p>
+      <div ref="messagesBottom"></div>
     </div>
     <div class="card-footer">
       <submit-form-view @submit="onSubmit" v-if="isUserLoggedIn" />
@@ -44,6 +45,10 @@ export default {
   methods: {
     addMessage(author, text, isOur) {
       this.messages.push({author, text, isOur})
+      this.$nextTick(() => {
+        // Code that will run only after the entire view has been re-rendered
+        this.$refs.messagesBottom.scrollIntoView({behavior: 'smooth'})
+      })
     },
     onReceiveMessage(author, text) {
       this.addMessage(author, text, false)

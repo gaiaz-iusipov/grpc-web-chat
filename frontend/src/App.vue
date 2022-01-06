@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col col-md-6 offset-md-3 pt-3">
+      <div class="col col-md-6 offset-md-3">
         <chat-view />
       </div>
     </div>
