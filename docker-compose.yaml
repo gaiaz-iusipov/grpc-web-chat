@@ -25,3 +25,5 @@ services:
       - '80:80/tcp'
     depends_on:
       - envoy
+    env_file:
+      - frontend/.env

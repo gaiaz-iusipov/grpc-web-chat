@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import {Client, Message} from './chat/chat_pb'
 import {ChatClient} from './chat/chat_grpc_web_pb'
 
@@ -8,7 +8,7 @@ export default class {
   constructor() {
     this.#client = new Client()
     this.#client.setId(uuidv4())
-    this.#protoClient = new ChatClient(process.env.VUE_APP_API_URL)
+    this.#protoClient = new ChatClient(process.env.VUE_APP_API_URL, null, null)
   }
   subscribe(callback) {
     const stream = this.#protoClient.subscribe(this.#client)

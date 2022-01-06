@@ -20,15 +20,12 @@ services:
       - backend
 
   frontend:
-    build:
-      context: frontend
-      dockerfile: Dockerfile-dev
-    user: ${FIXUID:-1000}:${FIXGID:-1000}
+    image: 'node:lts-alpine3.15'
+    working_dir: /app
     ports:
       - '80:3000/tcp'
     depends_on:
       - envoy
     volumes:
       - ./frontend:/app:rw
-    entrypoint: fixuid
     command: tail -f /dev/null

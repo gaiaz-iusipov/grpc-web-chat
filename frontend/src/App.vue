@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="container">
+  <div class="container">
     <div class="row">
       <div class="col col-md-6 offset-md-3 pt-3">
         <chat-view />
@@ -9,10 +9,10 @@
 </template>
 
 <script>
-import ChatView from '@/components/Chat'
+import ChatView from './components/Chat.vue'
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
     ChatView
   }
