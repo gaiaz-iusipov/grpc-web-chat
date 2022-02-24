@@ -1,4 +1,4 @@
-package http
+package debug
 
 import (
 	"context"
@@ -14,7 +14,7 @@ type Server struct {
 	httpServer *http.Server
 }
 
-func New(port uint16) *Server {
+func NewHTTPServer(port uint16) *Server {
 	server := &Server{
 		httpServer: &http.Server{
 			Addr: ":" + strconv.FormatInt(int64(port), 10),

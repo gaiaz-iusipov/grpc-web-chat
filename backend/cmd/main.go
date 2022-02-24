@@ -12,13 +12,15 @@ import (
 	"github.com/caarlos0/env/v6"
 	"github.com/rs/zerolog/log"
 	"github.com/subosito/gotenv"
+	"google.golang.org/grpc"
 
-	"github.com/gaiaz-iusipov/grpc-web-chat/internal/grpc"
-	"github.com/gaiaz-iusipov/grpc-web-chat/internal/http"
+	"github.com/gaiaz-iusipov/grpc-web-chat/internal/debug"
+	"github.com/gaiaz-iusipov/grpc-web-chat/internal/public"
 )
 
 type config struct {
 	GRPCPort  uint16 `env:"GRPC_PORT"`
+	HTTPPort  uint16 `env:"HTTP_PORT"`
 	DebugPort uint16 `env:"DEBUG_PORT"`
 }
 
@@ -30,17 +32,26 @@ func main() {
 		log.Fatal().Err(err).Msg("env.Parse()")
 	}
 
-	grpcServer := grpc.New(cfg.GRPCPort)
+	grpcServer := grpc.NewServer()
+
+	publicGRPCServer := public.NewGRPCServer(cfg.GRPCPort, grpcServer)
 	go func() {
-		if err := grpcServer.Run(); err != nil {
-			log.Fatal().Err(err).Msg("grpcServer.Run()")
+		if err := publicGRPCServer.Run(); err != nil {
+			log.Fatal().Err(err).Msg("publicGRPCServer.Run()")
 		}
 	}()
 
-	debugServer := http.New(cfg.DebugPort)
+	publicHTTPServer := public.NewHTTPServer(cfg.HTTPPort, grpcServer)
 	go func() {
-		if err := debugServer.Run(); err != nil {
-			log.Fatal().Err(err).Msg("debugServer.Run()")
+		if err := publicHTTPServer.Run(); err != nil {
+			log.Fatal().Err(err).Msg("publicHTTPServer.Run()")
+		}
+	}()
+
+	debugHTTPServer := debug.NewHTTPServer(cfg.DebugPort)
+	go func() {
+		if err := debugHTTPServer.Run(); err != nil {
+			log.Fatal().Err(err).Msg("debugHTTPServer.Run()")
 		}
 	}()
 
@@ -61,9 +72,9 @@ func main() {
 	go func() {
 		defer wg.Done()
 
-		wgErr := grpcServer.Close(closeCtx)
+		wgErr := publicGRPCServer.Close(closeCtx)
 		if wgErr != nil {
-			log.Error().Err(wgErr).Msg("grpcServer.Close()")
+			log.Error().Err(wgErr).Msg("publicGRPCServer.Close()")
 		}
 	}()
 
@@ -71,9 +82,19 @@ func main() {
 	go func() {
 		defer wg.Done()
 
-		wgErr := debugServer.Close(closeCtx)
+		wgErr := publicHTTPServer.Close(closeCtx)
 		if wgErr != nil {
-			log.Error().Err(wgErr).Msg("debugServer.Close()")
+			log.Error().Err(wgErr).Msg("publicHTTPServer.Close()")
+		}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+
+		wgErr := debugHTTPServer.Close(closeCtx)
+		if wgErr != nil {
+			log.Error().Err(wgErr).Msg("debugHTTPServer.Close()")
 		}
 	}()
 
