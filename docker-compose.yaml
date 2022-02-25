@@ -5,25 +5,15 @@ services:
     build:
       context: backend
     ports:
+      - '6001:6001/tcp'
       - '6060:6060/tcp'
     env_file:
       - backend/.env
-
-  envoy:
-    build:
-      context: envoy
-    ports:
-      - '3000:3000/tcp'
-      - '9901:9901/tcp'
-    depends_on:
-      - backend
 
   frontend:
     build:
       context: frontend
     ports:
       - '80:80/tcp'
-    depends_on:
-      - envoy
     env_file:
       - frontend/.env
