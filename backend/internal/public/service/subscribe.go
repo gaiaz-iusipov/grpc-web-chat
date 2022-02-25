@@ -16,18 +16,21 @@ func (s *Service) Subscribe(req *proto.SubscribeRequest, respSender proto.Chat_S
 		Str("client_uuid", clientUUID).
 		Msg("client subscribed")
 
-	for message := range channel {
-		err := respSender.Send(&proto.SubscribeResponse{
-			Message: message,
-		})
-		if err != nil {
-			delete(s.channels, clientUUID)
-			log.Debug().
-				Str("client_uuid", clientUUID).
-				Msg("client unsubscribed")
-			break
+	for {
+		select {
+		case msg := <-channel:
+			err := respSender.Send(&proto.SubscribeResponse{
+				Message: msg,
+			})
+			if err != nil {
+				delete(s.channels, clientUUID)
+				log.Debug().
+					Str("client_uuid", clientUUID).
+					Msg("client unsubscribed")
+				return nil
+			}
+		case <-s.closeCh:
+			return nil
 		}
 	}
-
-	return nil
 }

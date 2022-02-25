@@ -4,10 +4,12 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"time"
 
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 
+	"github.com/gaiaz-iusipov/grpc-web-chat/internal/app/config"
 	"github.com/gaiaz-iusipov/grpc-web-chat/internal/public/service"
 	proto "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat"
 )
@@ -17,16 +19,21 @@ type GRPCServer struct {
 	server *grpc.Server
 }
 
-func NewGRPCServer(port uint16, grpcServer *grpc.Server) *GRPCServer {
-	proto.RegisterChatServer(grpcServer, service.New())
+func NewGRPCServer(ctx context.Context, grpcServer *grpc.Server, chatSrv *service.Service) (GRPCServer, error) {
+	port := config.GRPCPort(ctx)
+	if port == 0 {
+		return GRPCServer{}, errors.New("missing GRPCPort")
+	}
 
-	return &GRPCServer{
+	proto.RegisterChatServer(grpcServer, chatSrv)
+
+	return GRPCServer{
 		port:   port,
 		server: grpcServer,
-	}
+	}, nil
 }
 
-func (s *GRPCServer) Run() error {
+func (s GRPCServer) Run() error {
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", s.port))
 	if err != nil {
 		return errors.Wrap(err, "net.Listen()")
@@ -39,17 +46,20 @@ func (s *GRPCServer) Run() error {
 	return nil
 }
 
-func (s *GRPCServer) Close(ctx context.Context) error {
-	stopped := make(chan struct{})
+func (s GRPCServer) Close(ctx context.Context) error {
+	ctx, cancel := context.WithTimeout(ctx, time.Second)
+	defer cancel()
+
+	stopCh := make(chan struct{})
 	go func() {
 		s.server.GracefulStop()
-		close(stopped)
+		close(stopCh)
 	}()
 
 	select {
 	case <-ctx.Done():
 		return errors.Wrap(ctx.Err(), "server.GracefulStop()")
-	case <-stopped:
+	case <-stopCh:
 	}
 	return nil
 }
