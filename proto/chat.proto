@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package chat;
 
-option go_package = "pkg/chat;chat";
-
 service Chat {
   rpc Subscribe (SubscribeRequest) returns (stream SubscribeResponse);
   rpc AddMessage (AddMessageRequest) returns (AddMessageResponse);
