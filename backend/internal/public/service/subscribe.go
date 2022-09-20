@@ -24,7 +24,7 @@ func (s *Service) Subscribe(req *chatv1.Subscribe_Request, respSender chatv1.Cha
 			})
 			if err != nil {
 				delete(s.channels, clientUUID)
-				log.Debug().
+				log.Ctx(respSender.Context()).Debug().
 					Str("client_uuid", clientUUID).
 					Msg("client unsubscribed")
 				return nil

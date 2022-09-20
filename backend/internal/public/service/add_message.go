@@ -8,10 +8,10 @@ import (
 	chatv1 "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat/v1"
 )
 
-func (s *Service) AddMessage(_ context.Context, req *chatv1.AddMessage_Request) (*chatv1.AddMessage_Response, error) {
+func (s *Service) AddMessage(ctx context.Context, req *chatv1.AddMessage_Request) (*chatv1.AddMessage_Response, error) {
 	message := req.GetMessage()
 
-	log.Debug().
+	log.Ctx(ctx).Debug().
 		Str("client_uuid", message.Client.Uuid).
 		Str("message_text", message.Text).
 		Msg("message received")

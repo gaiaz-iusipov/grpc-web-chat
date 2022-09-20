@@ -8,35 +8,45 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 
 	"github.com/gaiaz-iusipov/grpc-web-chat/internal/app"
 )
 
 func main() {
-	initCtx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	ctx := context.Background()
+	if err := run(ctx); err != nil {
+		log.Ctx(ctx).Fatal().Err(err)
+	}
+}
+
+func run(ctx context.Context) error {
+	initCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	appSvc, err := app.New(initCtx)
 	if err != nil {
-		log.Fatal().Err(err).Msg("app.New()")
+		return errors.Wrap(err, "init app")
 	}
 
 	appSvc.Run()
 
-	log.Debug().Msg("app started")
+	log.Ctx(initCtx).Debug().Msg("app started")
 
 	termChan := make(chan os.Signal, 1)
 	signal.Notify(termChan, syscall.SIGINT, syscall.SIGTERM)
 	<-termChan
 
-	log.Debug().Msg("shutting down gracefully")
-
-	closeCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	closeCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	err = appSvc.Close(closeCtx)
-	if err != nil {
-		log.Error().Err(err).Msg("appSvc.Close()")
+	log.Ctx(closeCtx).Debug().Msg("shutting down gracefully")
+
+	closeErr := appSvc.Close(closeCtx)
+	if closeErr != nil {
+		return errors.Wrap(closeErr, "close app")
 	}
+
+	return nil
 }
