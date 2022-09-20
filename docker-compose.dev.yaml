@@ -2,7 +2,7 @@ version: '3'
 
 services:
   backend:
-    image: 'golang:1.18'
+    image: 'golang:1.19'
     working_dir: /go/src/app
     ports:
       - '6001:6001/tcp'

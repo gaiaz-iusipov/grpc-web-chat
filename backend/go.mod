@@ -1,17 +1,17 @@
 module github.com/gaiaz-iusipov/grpc-web-chat
 
-go 1.18
+go 1.19
 
 require (
-	github.com/caarlos0/env/v6 v6.9.1
+	github.com/caarlos0/env/v6 v6.10.1
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/pkg/errors v0.9.1
-	github.com/rs/zerolog v1.26.1
-	github.com/subosito/gotenv v1.2.0
+	github.com/rs/zerolog v1.28.0
+	github.com/subosito/gotenv v1.4.1
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
-	google.golang.org/grpc v1.43.0
-	google.golang.org/protobuf v1.27.1
+	google.golang.org/grpc v1.49.0
+	google.golang.org/protobuf v1.28.1
 )
 
 require (
@@ -20,6 +20,8 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/klauspost/compress v1.11.7 // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/rs/cors v1.7.0 // indirect
 	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
 	golang.org/x/sys v0.0.0-20211210111614-af8b64212486 // indirect
