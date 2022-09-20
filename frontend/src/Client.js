@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
-import { SubscribeRequest, Client, Message, AddMessageRequest } from './chat/chat_pb'
-import { ChatClient } from './chat/chat_grpc_web_pb'
+import { Subscribe, Client, Message, AddMessage } from './chat/v1/chat_pb'
+import { ChatClient } from './chat/v1/chat_grpc_web_pb'
 
 export default class {
   #protoClient;
@@ -10,7 +10,7 @@ export default class {
     this.#clientUuid = uuidv4()
   }
   subscribe(callback) {
-    const req = new SubscribeRequest()
+    const req = new Subscribe.Request()
     req.setClientUuid(this.#clientUuid)
 
     const stream = this.#protoClient.subscribe(req)
@@ -29,7 +29,7 @@ export default class {
     msg.setClient(client)
     msg.setText(text)
 
-    const req = new AddMessageRequest()
+    const req = new AddMessage.Request()
     req.setMessage(msg)
 
     this.#protoClient.addMessage(req, {}, (err) => {

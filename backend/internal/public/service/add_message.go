@@ -5,10 +5,10 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	proto "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat"
+	chatv1 "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat/v1"
 )
 
-func (s *Service) AddMessage(_ context.Context, req *proto.AddMessageRequest) (*proto.AddMessageResponse, error) {
+func (s *Service) AddMessage(_ context.Context, req *chatv1.AddMessage_Request) (*chatv1.AddMessage_Response, error) {
 	message := req.GetMessage()
 
 	log.Debug().
@@ -24,5 +24,5 @@ func (s *Service) AddMessage(_ context.Context, req *proto.AddMessageRequest) (*
 		channel <- message
 	}
 
-	return &proto.AddMessageResponse{}, nil
+	return &chatv1.AddMessage_Response{}, nil
 }

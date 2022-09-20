@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             (unknown)
-// source: chat.proto
+// source: chat/v1/chat.proto
 
-package chat
+package chatv1
 
 import (
 	context "context"
@@ -22,8 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ChatClient interface {
-	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (Chat_SubscribeClient, error)
-	AddMessage(ctx context.Context, in *AddMessageRequest, opts ...grpc.CallOption) (*AddMessageResponse, error)
+	Subscribe(ctx context.Context, in *Subscribe_Request, opts ...grpc.CallOption) (Chat_SubscribeClient, error)
+	AddMessage(ctx context.Context, in *AddMessage_Request, opts ...grpc.CallOption) (*AddMessage_Response, error)
 }
 
 type chatClient struct {
@@ -34,8 +34,8 @@ func NewChatClient(cc grpc.ClientConnInterface) ChatClient {
 	return &chatClient{cc}
 }
 
-func (c *chatClient) Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (Chat_SubscribeClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Chat_ServiceDesc.Streams[0], "/chat.Chat/Subscribe", opts...)
+func (c *chatClient) Subscribe(ctx context.Context, in *Subscribe_Request, opts ...grpc.CallOption) (Chat_SubscribeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Chat_ServiceDesc.Streams[0], "/chat.v1.Chat/Subscribe", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *chatClient) Subscribe(ctx context.Context, in *SubscribeRequest, opts .
 }
 
 type Chat_SubscribeClient interface {
-	Recv() (*SubscribeResponse, error)
+	Recv() (*Subscribe_Response, error)
 	grpc.ClientStream
 }
 
@@ -58,17 +58,17 @@ type chatSubscribeClient struct {
 	grpc.ClientStream
 }
 
-func (x *chatSubscribeClient) Recv() (*SubscribeResponse, error) {
-	m := new(SubscribeResponse)
+func (x *chatSubscribeClient) Recv() (*Subscribe_Response, error) {
+	m := new(Subscribe_Response)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-func (c *chatClient) AddMessage(ctx context.Context, in *AddMessageRequest, opts ...grpc.CallOption) (*AddMessageResponse, error) {
-	out := new(AddMessageResponse)
-	err := c.cc.Invoke(ctx, "/chat.Chat/AddMessage", in, out, opts...)
+func (c *chatClient) AddMessage(ctx context.Context, in *AddMessage_Request, opts ...grpc.CallOption) (*AddMessage_Response, error) {
+	out := new(AddMessage_Response)
+	err := c.cc.Invoke(ctx, "/chat.v1.Chat/AddMessage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -79,8 +79,8 @@ func (c *chatClient) AddMessage(ctx context.Context, in *AddMessageRequest, opts
 // All implementations must embed UnimplementedChatServer
 // for forward compatibility
 type ChatServer interface {
-	Subscribe(*SubscribeRequest, Chat_SubscribeServer) error
-	AddMessage(context.Context, *AddMessageRequest) (*AddMessageResponse, error)
+	Subscribe(*Subscribe_Request, Chat_SubscribeServer) error
+	AddMessage(context.Context, *AddMessage_Request) (*AddMessage_Response, error)
 	mustEmbedUnimplementedChatServer()
 }
 
@@ -88,10 +88,10 @@ type ChatServer interface {
 type UnimplementedChatServer struct {
 }
 
-func (UnimplementedChatServer) Subscribe(*SubscribeRequest, Chat_SubscribeServer) error {
+func (UnimplementedChatServer) Subscribe(*Subscribe_Request, Chat_SubscribeServer) error {
 	return status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
 }
-func (UnimplementedChatServer) AddMessage(context.Context, *AddMessageRequest) (*AddMessageResponse, error) {
+func (UnimplementedChatServer) AddMessage(context.Context, *AddMessage_Request) (*AddMessage_Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddMessage not implemented")
 }
 func (UnimplementedChatServer) mustEmbedUnimplementedChatServer() {}
@@ -108,7 +108,7 @@ func RegisterChatServer(s grpc.ServiceRegistrar, srv ChatServer) {
 }
 
 func _Chat_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(SubscribeRequest)
+	m := new(Subscribe_Request)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
@@ -116,7 +116,7 @@ func _Chat_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
 }
 
 type Chat_SubscribeServer interface {
-	Send(*SubscribeResponse) error
+	Send(*Subscribe_Response) error
 	grpc.ServerStream
 }
 
@@ -124,12 +124,12 @@ type chatSubscribeServer struct {
 	grpc.ServerStream
 }
 
-func (x *chatSubscribeServer) Send(m *SubscribeResponse) error {
+func (x *chatSubscribeServer) Send(m *Subscribe_Response) error {
 	return x.ServerStream.SendMsg(m)
 }
 
 func _Chat_AddMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddMessageRequest)
+	in := new(AddMessage_Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -138,10 +138,10 @@ func _Chat_AddMessage_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/chat.Chat/AddMessage",
+		FullMethod: "/chat.v1.Chat/AddMessage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatServer).AddMessage(ctx, req.(*AddMessageRequest))
+		return srv.(ChatServer).AddMessage(ctx, req.(*AddMessage_Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -150,7 +150,7 @@ func _Chat_AddMessage_Handler(srv interface{}, ctx context.Context, dec func(int
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Chat_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "chat.Chat",
+	ServiceName: "chat.v1.Chat",
 	HandlerType: (*ChatServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -165,5 +165,5 @@ var Chat_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "chat.proto",
+	Metadata: "chat/v1/chat.proto",
 }

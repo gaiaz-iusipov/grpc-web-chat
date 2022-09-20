@@ -14,11 +14,11 @@ import (
 	"github.com/gaiaz-iusipov/grpc-web-chat/internal/debug"
 	"github.com/gaiaz-iusipov/grpc-web-chat/internal/public"
 	"github.com/gaiaz-iusipov/grpc-web-chat/internal/public/service"
-	proto "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat"
+	chatv1 "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat/v1"
 )
 
 type ClosableChatServer interface {
-	proto.ChatServer
+	chatv1.ChatServer
 	io.Closer
 }
 
