@@ -1,5 +1,5 @@
 /**
- * @fileoverview gRPC-Web generated client stub for chat
+ * @fileoverview gRPC-Web generated client stub for chat.v1
  * @enhanceable
  * @public
  */
@@ -16,7 +16,8 @@ const grpc = {};
 grpc.web = require('grpc-web');
 
 const proto = {};
-proto.chat = require('./chat_pb.js');
+proto.chat = {};
+proto.chat.v1 = require('./chat_pb.js');
 
 /**
  * @param {string} hostname
@@ -26,7 +27,7 @@ proto.chat = require('./chat_pb.js');
  * @struct
  * @final
  */
-proto.chat.ChatClient =
+proto.chat.v1.ChatClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options.format = 'text';
@@ -52,7 +53,7 @@ proto.chat.ChatClient =
  * @struct
  * @final
  */
-proto.chat.ChatPromiseClient =
+proto.chat.v1.ChatPromiseClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options.format = 'text';
@@ -73,36 +74,36 @@ proto.chat.ChatPromiseClient =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.chat.SubscribeRequest,
- *   !proto.chat.SubscribeResponse>}
+ *   !proto.chat.v1.Subscribe.Request,
+ *   !proto.chat.v1.Subscribe.Response>}
  */
 const methodDescriptor_Chat_Subscribe = new grpc.web.MethodDescriptor(
-  '/chat.Chat/Subscribe',
+  '/chat.v1.Chat/Subscribe',
   grpc.web.MethodType.SERVER_STREAMING,
-  proto.chat.SubscribeRequest,
-  proto.chat.SubscribeResponse,
+  proto.chat.v1.Subscribe.Request,
+  proto.chat.v1.Subscribe.Response,
   /**
-   * @param {!proto.chat.SubscribeRequest} request
+   * @param {!proto.chat.v1.Subscribe.Request} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.chat.SubscribeResponse.deserializeBinary
+  proto.chat.v1.Subscribe.Response.deserializeBinary
 );
 
 
 /**
- * @param {!proto.chat.SubscribeRequest} request The request proto
+ * @param {!proto.chat.v1.Subscribe.Request} request The request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.chat.SubscribeResponse>}
+ * @return {!grpc.web.ClientReadableStream<!proto.chat.v1.Subscribe.Response>}
  *     The XHR Node Readable Stream
  */
-proto.chat.ChatClient.prototype.subscribe =
+proto.chat.v1.ChatClient.prototype.subscribe =
     function(request, metadata) {
   return this.client_.serverStreaming(this.hostname_ +
-      '/chat.Chat/Subscribe',
+      '/chat.v1.Chat/Subscribe',
       request,
       metadata || {},
       methodDescriptor_Chat_Subscribe);
@@ -110,16 +111,16 @@ proto.chat.ChatClient.prototype.subscribe =
 
 
 /**
- * @param {!proto.chat.SubscribeRequest} request The request proto
+ * @param {!proto.chat.v1.Subscribe.Request} request The request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.chat.SubscribeResponse>}
+ * @return {!grpc.web.ClientReadableStream<!proto.chat.v1.Subscribe.Response>}
  *     The XHR Node Readable Stream
  */
-proto.chat.ChatPromiseClient.prototype.subscribe =
+proto.chat.v1.ChatPromiseClient.prototype.subscribe =
     function(request, metadata) {
   return this.client_.serverStreaming(this.hostname_ +
-      '/chat.Chat/Subscribe',
+      '/chat.v1.Chat/Subscribe',
       request,
       metadata || {},
       methodDescriptor_Chat_Subscribe);
@@ -129,39 +130,39 @@ proto.chat.ChatPromiseClient.prototype.subscribe =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.chat.AddMessageRequest,
- *   !proto.chat.AddMessageResponse>}
+ *   !proto.chat.v1.AddMessage.Request,
+ *   !proto.chat.v1.AddMessage.Response>}
  */
 const methodDescriptor_Chat_AddMessage = new grpc.web.MethodDescriptor(
-  '/chat.Chat/AddMessage',
+  '/chat.v1.Chat/AddMessage',
   grpc.web.MethodType.UNARY,
-  proto.chat.AddMessageRequest,
-  proto.chat.AddMessageResponse,
+  proto.chat.v1.AddMessage.Request,
+  proto.chat.v1.AddMessage.Response,
   /**
-   * @param {!proto.chat.AddMessageRequest} request
+   * @param {!proto.chat.v1.AddMessage.Request} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.chat.AddMessageResponse.deserializeBinary
+  proto.chat.v1.AddMessage.Response.deserializeBinary
 );
 
 
 /**
- * @param {!proto.chat.AddMessageRequest} request The
+ * @param {!proto.chat.v1.AddMessage.Request} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.chat.AddMessageResponse)}
+ * @param {function(?grpc.web.RpcError, ?proto.chat.v1.AddMessage.Response)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.chat.AddMessageResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.chat.v1.AddMessage.Response>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.chat.ChatClient.prototype.addMessage =
+proto.chat.v1.ChatClient.prototype.addMessage =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/chat.Chat/AddMessage',
+      '/chat.v1.Chat/AddMessage',
       request,
       metadata || {},
       methodDescriptor_Chat_AddMessage,
@@ -170,22 +171,22 @@ proto.chat.ChatClient.prototype.addMessage =
 
 
 /**
- * @param {!proto.chat.AddMessageRequest} request The
+ * @param {!proto.chat.v1.AddMessage.Request} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.chat.AddMessageResponse>}
+ * @return {!Promise<!proto.chat.v1.AddMessage.Response>}
  *     Promise that resolves to the response
  */
-proto.chat.ChatPromiseClient.prototype.addMessage =
+proto.chat.v1.ChatPromiseClient.prototype.addMessage =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/chat.Chat/AddMessage',
+      '/chat.v1.Chat/AddMessage',
       request,
       metadata || {},
       methodDescriptor_Chat_AddMessage);
 };
 
 
-module.exports = proto.chat;
+module.exports = proto.chat.v1;
 

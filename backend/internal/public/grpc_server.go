@@ -11,7 +11,7 @@ import (
 
 	"github.com/gaiaz-iusipov/grpc-web-chat/internal/app/config"
 	"github.com/gaiaz-iusipov/grpc-web-chat/internal/public/service"
-	proto "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat"
+	chatv1 "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat/v1"
 )
 
 type GRPCServer struct {
@@ -25,7 +25,7 @@ func NewGRPCServer(ctx context.Context, grpcServer *grpc.Server, chatSrv *servic
 		return GRPCServer{}, errors.New("missing GRPCPort")
 	}
 
-	proto.RegisterChatServer(grpcServer, chatSrv)
+	chatv1.RegisterChatServer(grpcServer, chatSrv)
 
 	return GRPCServer{
 		port:   port,

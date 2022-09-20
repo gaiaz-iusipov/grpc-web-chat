@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package chat.v1;
+
+service Chat {
+  rpc Subscribe (Subscribe.Request) returns (stream Subscribe.Response);
+  rpc AddMessage (AddMessage.Request) returns (AddMessage.Response);
+}
+
+message Subscribe {
+  message Request {
+    string client_uuid = 1;
+  }
+  message Response {
+    Message message = 1;
+  }
+}
+
+message AddMessage {
+  message Request {
+    Message message = 1;
+  }
+  message Response {}
+}
+
+message Client {
+  string uuid = 1;
+  string name = 2;
+}
+
+message Message {
+  Client client = 1;
+  string text = 3;
+}
