@@ -1,4 +1,4 @@
-FROM node:lts-alpine3.15 as builder
+FROM node:lts-alpine3.16 as builder
 WORKDIR /app
 COPY . .
 RUN yarn install \
