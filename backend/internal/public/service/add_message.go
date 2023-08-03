@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/rs/zerolog/log"
+	"golang.org/x/exp/slog"
 
 	chatv1 "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat/v1"
 )
@@ -11,10 +11,13 @@ import (
 func (s *Service) AddMessage(ctx context.Context, req *chatv1.AddMessage_Request) (*chatv1.AddMessage_Response, error) {
 	message := req.GetMessage()
 
-	log.Ctx(ctx).Debug().
-		Str("client_uuid", message.Client.Uuid).
-		Str("message_text", message.Text).
-		Msg("message received")
+	slog.InfoContext(ctx, "message received",
+		"client_uuid", message.Client.Uuid,
+		"message_text", message.Text,
+	)
+
+	s.channelsMu.RLock()
+	defer s.channelsMu.RUnlock()
 
 	for clientUUID, channel := range s.channels {
 		if clientUUID == message.Client.Uuid {

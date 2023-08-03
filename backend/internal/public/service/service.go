@@ -2,14 +2,16 @@ package service
 
 import (
 	"io"
+	"sync"
 
 	chatv1 "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat/v1"
 )
 
 type Service struct {
 	chatv1.UnimplementedChatServer
-	closeCh  chan struct{}
-	channels map[string]chan *chatv1.Message
+	closeCh    chan struct{}
+	channels   map[string]chan *chatv1.Message
+	channelsMu sync.RWMutex
 }
 
 var (

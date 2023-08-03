@@ -5,8 +5,7 @@ import (
 	"io"
 
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
-
+	"golang.org/x/exp/slog"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 
@@ -66,19 +65,19 @@ func New(ctx context.Context) (App, error) {
 func (a App) Run() {
 	go func() {
 		if err := a.publicGRPCServer.Run(); err != nil {
-			log.Fatal().Err(err).Msg("publicGRPCServer.Run()")
+			slog.Error("run public grpc server", "error", err)
 		}
 	}()
 
 	go func() {
 		if err := a.publicHTTPServer.Run(); err != nil {
-			log.Fatal().Err(err).Msg("publicHTTPServer.Run()")
+			slog.Error("run public http server", "error", err)
 		}
 	}()
 
 	go func() {
 		if err := a.debugHTTPServer.Run(); err != nil {
-			log.Fatal().Err(err).Msg("debugHTTPServer.Run()")
+			slog.Error("run debug http server", "error", err)
 		}
 	}()
 }

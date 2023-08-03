@@ -9,15 +9,19 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
+	"golang.org/x/exp/slog"
 
 	"github.com/gaiaz-iusipov/grpc-web-chat/internal/app"
 )
 
 func main() {
+	logHandler := slog.NewJSONHandler(os.Stdout, nil)
+	slog.SetDefault(slog.New(logHandler))
+
 	ctx := context.Background()
 	if err := run(ctx); err != nil {
-		log.Ctx(ctx).Fatal().Err(err)
+		slog.ErrorContext(ctx, "failed to run app", "error", err)
+		os.Exit(1)
 	}
 }
 
@@ -32,7 +36,7 @@ func run(ctx context.Context) error {
 
 	appSvc.Run()
 
-	log.Ctx(initCtx).Debug().Msg("app started")
+	slog.InfoContext(initCtx, "started")
 
 	termChan := make(chan os.Signal, 1)
 	signal.Notify(termChan, syscall.SIGINT, syscall.SIGTERM)
@@ -41,7 +45,7 @@ func run(ctx context.Context) error {
 	closeCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	log.Ctx(closeCtx).Debug().Msg("shutting down gracefully")
+	slog.InfoContext(closeCtx, "shutting down")
 
 	closeErr := appSvc.Close(closeCtx)
 	if closeErr != nil {
