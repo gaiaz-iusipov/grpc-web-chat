@@ -12,10 +12,10 @@ plugins:
     path: bin/protoc-gen-go-grpc
     out: backend/pkg
     opt: paths=source_relative
-  - remote: buf.build/protocolbuffers/plugins/js:v3.20.0-1
+  - plugin: buf.build/protocolbuffers/js:v3.21.2
     out: frontend/src
     opt: import_style=commonjs,binary
-  - remote: buf.build/grpc/plugins/web:v1.3.1-2
+  - plugin: buf.build/grpc/web:v1.4.2
     out: frontend/src
     opt:
       - import_style=commonjs
