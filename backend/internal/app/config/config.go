@@ -2,9 +2,9 @@ package config
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/caarlos0/env/v6"
-	"github.com/pkg/errors"
+	"github.com/caarlos0/env/v9"
 	"github.com/subosito/gotenv"
 )
 
@@ -15,11 +15,11 @@ type Config struct {
 }
 
 func New() (*Config, error) {
-	_ = gotenv.Load()
+	_ = gotenv.Load(".env")
 
 	cfg := new(Config)
-	if err := env.Parse(cfg, env.Options{RequiredIfNoDef: true}); err != nil {
-		return nil, errors.Wrap(err, "env.Parse()")
+	if err := env.ParseWithOptions(cfg, env.Options{RequiredIfNoDef: true}); err != nil {
+		return nil, fmt.Errorf("parse env: %w", err)
 	}
 
 	return cfg, nil
