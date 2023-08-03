@@ -1,4 +1,4 @@
-FROM golang:1.19 as build-env
+FROM golang:1.20 as build-env
 WORKDIR /go/src/app
 COPY . .
 RUN CGO_ENABLED=0 go build -o /go/bin/app cmd/main.go
