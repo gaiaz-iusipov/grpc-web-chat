@@ -1,10 +1,39 @@
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+
+const text = ref<string>('')
+const isTextEmpty = computed<boolean>(() => '' === text.value)
+
+const emit = defineEmits(['submit'])
+
+function submit() {
+  if (isTextEmpty.value) {
+    return
+  }
+
+  emit('submit', text.value)
+  text.value = ''
+  focus()
+}
+
+onMounted(() => {
+  focus()
+})
+
+const inputRef = ref<HTMLInputElement | null>(null)
+
+function focus() {
+  inputRef.value?.focus()
+}
+</script>
+
 <template>
   <div class="input-group">
     <input
       type="text"
       class="form-control"
       placeholder="Enter your message"
-      ref="input"
+      ref="inputRef"
       v-model.trim="text"
       v-on:keyup.enter="submit"
     >
@@ -20,35 +49,3 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      text: ''
-    }
-  },
-  mounted() {
-    this.focus()
-  },
-  computed: {
-    isTextEmpty() {
-      return '' === this.text
-    }
-  },
-  methods: {
-    submit() {
-      if (0 === this.text.length) {
-        return
-      }
-
-      this.$emit('submit', this.text)
-      this.text = ''
-      this.focus()
-    },
-    focus() {
-      this.$refs.input.focus()
-    }
-  }
-}
-</script>

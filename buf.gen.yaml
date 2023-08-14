@@ -12,11 +12,5 @@ plugins:
     path: bin/protoc-gen-go-grpc
     out: backend/pkg
     opt: paths=source_relative
-  - plugin: buf.build/protocolbuffers/js:v3.21.2
+  - plugin: buf.build/community/timostamm-protobuf-ts:v2.9.1
     out: frontend/src
-    opt: import_style=commonjs,binary
-  - plugin: buf.build/grpc/web:v1.4.2
-    out: frontend/src
-    opt:
-      - import_style=commonjs
-      - mode=grpcwebtext
