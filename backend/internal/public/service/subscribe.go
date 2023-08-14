@@ -2,8 +2,8 @@ package service
 
 import (
 	"fmt"
+	"log/slog"
 
-	"golang.org/x/exp/slog"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 

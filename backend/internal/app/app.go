@@ -3,9 +3,9 @@ package app
 import (
 	"context"
 	"io"
+	"log/slog"
 
 	"github.com/pkg/errors"
-	"golang.org/x/exp/slog"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 

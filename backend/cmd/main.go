@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log/slog"
 	_ "net/http/pprof"
 	"os"
 	"os/signal"
@@ -9,7 +10,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"golang.org/x/exp/slog"
 
 	"github.com/gaiaz-iusipov/grpc-web-chat/internal/app"
 )
