@@ -1,8 +1,8 @@
-FROM node:lts-alpine3.16 as builder
+FROM node:lts-alpine3.18 as builder
 WORKDIR /app
 COPY . .
-RUN yarn install \
-    && yarn build
+RUN yarn install
+RUN yarn build
 
-FROM nginx:1.21.5-alpine
+FROM nginx:stable-alpine3.17-slim
 COPY --from=builder /app/dist/ /usr/share/nginx/html
