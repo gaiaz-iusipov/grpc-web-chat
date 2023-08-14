@@ -2,8 +2,7 @@ package service
 
 import (
 	"context"
-
-	"golang.org/x/exp/slog"
+	"log/slog"
 
 	chatv1 "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat/v1"
 )
