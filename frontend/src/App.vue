@@ -71,7 +71,7 @@ async function addMessage(user: IUser, text: string, isOur: boolean) {
               v-for="(message, index) in messages"
               :key="index"
               :message="message"
-              :class="index > 0 && 'mt-3'"
+              :show-author="!index || messages[index-1].author.id !== message.author.id"
             />
             <p class="card-text" v-if="!messages.length">No Messages yet</p>
             <div ref="messagesBottomRef"></div>
