@@ -2,105 +2,106 @@ package app
 
 import (
 	"context"
-	"io"
+	"fmt"
 	"log/slog"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
-	"github.com/pkg/errors"
-	"golang.org/x/sync/errgroup"
-	"google.golang.org/grpc"
+	"github.com/go-deeper/app"
 
-	"github.com/gaiaz-iusipov/grpc-web-chat/internal/app/config"
-	"github.com/gaiaz-iusipov/grpc-web-chat/internal/debug"
-	"github.com/gaiaz-iusipov/grpc-web-chat/internal/public"
-	"github.com/gaiaz-iusipov/grpc-web-chat/internal/public/service"
-	chatv1 "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat/v1"
+	appconfig "github.com/gaiaz-iusipov/grpc-web-chat/internal/app/config"
+	grpcpubliccontroller "github.com/gaiaz-iusipov/grpc-web-chat/internal/grpc/public/controller"
+	grpcpublicserver "github.com/gaiaz-iusipov/grpc-web-chat/internal/grpc/public/server"
+	httpprivatecontroller "github.com/gaiaz-iusipov/grpc-web-chat/internal/http/private/controller"
+	httpprivateserver "github.com/gaiaz-iusipov/grpc-web-chat/internal/http/private/server"
+	httppublicserver "github.com/gaiaz-iusipov/grpc-web-chat/internal/http/public/server"
 )
 
-type ClosableChatServer interface {
-	chatv1.ChatServer
-	io.Closer
+func Run(ctx context.Context) error {
+	initCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	config, err := appconfig.New()
+	if err != nil {
+		return fmt.Errorf("new config: %w", err)
+	}
+
+	slog.LogAttrs(ctx, slog.LevelInfo, "starting", app.LogAttrs()...)
+
+	httpPrivateController := httpprivatecontroller.New()
+
+	httpPrivateServer := httpprivateserver.New(
+		config.HTTPPrivatePort,
+		httpPrivateController,
+	)
+
+	if err = runAsync(initCtx, httpPrivateServer.Run, httpPrivateServer.Running); err != nil {
+		return fmt.Errorf("run http private server: %w", err)
+	}
+
+	grpcPublicController := grpcpubliccontroller.New()
+
+	grpcPublicServer := grpcpublicserver.New(config.GRPCPublicPort, grpcPublicController)
+
+	httpPublicServer := httppublicserver.New(
+		config.HTTPPublicPort,
+		grpcPublicServer,
+	)
+
+	if err = runAsync(initCtx, httpPublicServer.Run, httpPublicServer.Running); err != nil {
+		return fmt.Errorf("run http public server: %w", err)
+	}
+
+	httpPrivateController.SetReady(true)
+
+	slog.InfoContext(ctx, "started",
+		"http_public_port", config.HTTPPublicPort,
+		"grpc_public_port", config.GRPCPublicPort,
+		"http_private_port", config.HTTPPrivatePort,
+	)
+
+	termChan := make(chan os.Signal, 1)
+	signal.Notify(termChan, syscall.SIGINT, syscall.SIGTERM)
+	<-termChan
+
+	httpPrivateController.SetReady(false)
+
+	closeCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	slog.InfoContext(closeCtx, "shutting down")
+
+	grpcPublicController.Close()
+
+	if closeErr := httpPublicServer.Close(closeCtx); closeErr != nil {
+		slog.ErrorContext(closeCtx, "failed to close http public server", "error", closeErr)
+	}
+
+	if closeErr := grpcPublicServer.Close(closeCtx); closeErr != nil {
+		slog.ErrorContext(closeCtx, "failed to close grpc public server", "error", closeErr)
+	}
+
+	if closeErr := httpPrivateServer.Close(closeCtx); closeErr != nil {
+		slog.ErrorContext(closeCtx, "failed to close http private server", "error", closeErr)
+	}
+
+	return nil
 }
 
-type App struct {
-	chatSrv          ClosableChatServer
-	publicGRPCServer public.GRPCServer
-	publicHTTPServer public.HTTPServer
-	debugHTTPServer  debug.HTTPServer
-}
-
-func New(ctx context.Context) (App, error) {
-	cfg, err := config.New()
-	if err != nil {
-		return App{}, errors.Wrap(err, "config.New()")
-	}
-
-	ctx = cfg.ToContext(ctx)
-
-	grpcServer := grpc.NewServer()
-	chatSrv := service.New()
-
-	publicGRPCServer, err := public.NewGRPCServer(ctx, grpcServer, chatSrv)
-	if err != nil {
-		return App{}, errors.Wrap(err, "public.NewGRPCServer()")
-	}
-
-	publicHTTPServer, err := public.NewHTTPServer(ctx, grpcServer)
-	if err != nil {
-		return App{}, errors.Wrap(err, "public.NewHTTPServer()")
-	}
-
-	debugHTTPServer, err := debug.NewHTTPServer(ctx)
-	if err != nil {
-		return App{}, errors.Wrap(err, "debug.NewHTTPServer()")
-	}
-
-	return App{
-		chatSrv:          chatSrv,
-		publicGRPCServer: publicGRPCServer,
-		publicHTTPServer: publicHTTPServer,
-		debugHTTPServer:  debugHTTPServer,
-	}, nil
-}
-
-func (a App) Run() {
+func runAsync(ctx context.Context, runFn func() error, okFn func() <-chan struct{}) error {
+	errCh := make(chan error)
 	go func() {
-		if err := a.publicGRPCServer.Run(); err != nil {
-			slog.Error("run public grpc server", "error", err)
-		}
+		errCh <- runFn()
 	}()
 
-	go func() {
-		if err := a.publicHTTPServer.Run(); err != nil {
-			slog.Error("run public http server", "error", err)
-		}
-	}()
-
-	go func() {
-		if err := a.debugHTTPServer.Run(); err != nil {
-			slog.Error("run debug http server", "error", err)
-		}
-	}()
-}
-
-func (a App) Close(ctx context.Context) error {
-	_ = a.chatSrv.Close()
-
-	eg, egCtx := errgroup.WithContext(ctx)
-
-	eg.Go(func() error {
-		egErr := a.publicHTTPServer.Close(egCtx)
-		if egErr != nil {
-			return errors.Wrap(egErr, "publicHTTPServer.Close()")
-		}
-
-		egErr = a.publicGRPCServer.Close(egCtx)
-		return errors.Wrap(egErr, "publicGRPCServer.Close()")
-	})
-
-	eg.Go(func() error {
-		egErr := a.debugHTTPServer.Close(egCtx)
-		return errors.Wrap(egErr, "debugHTTPServer.Close()")
-	})
-
-	return eg.Wait()
+	var err error
+	select {
+	case <-ctx.Done():
+		err = ctx.Err()
+	case err = <-errCh:
+	case <-okFn():
+	}
+	return err
 }

@@ -1,4 +1,4 @@
-package service
+package grpcpubliccontroller
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	chatv1 "github.com/gaiaz-iusipov/grpc-web-chat/pkg/chat/v1"
 )
 
-func (s *Service) AddMessage(ctx context.Context, req *chatv1.AddMessage_Request) (*chatv1.AddMessage_Response, error) {
+func (c *Controller) AddMessage(ctx context.Context, req *chatv1.AddMessage_Request) (*chatv1.AddMessage_Response, error) {
 	message := req.GetMessage()
 
 	slog.InfoContext(ctx, "message received",
@@ -15,10 +15,10 @@ func (s *Service) AddMessage(ctx context.Context, req *chatv1.AddMessage_Request
 		"message_text", message.Text,
 	)
 
-	s.channelsMu.RLock()
-	defer s.channelsMu.RUnlock()
+	c.channelsMu.RLock()
+	defer c.channelsMu.RUnlock()
 
-	for clientUUID, channel := range s.channels {
+	for clientUUID, channel := range c.channels {
 		if clientUUID == message.Client.Uuid {
 			continue
 		}
