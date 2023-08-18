@@ -1,7 +1,6 @@
-package config
+package appconfig
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/caarlos0/env/v9"
@@ -9,9 +8,9 @@ import (
 )
 
 type Config struct {
-	GRPCPort  uint16 `env:"GRPC_PORT"`
-	HTTPPort  uint16 `env:"HTTP_PORT"`
-	DebugPort uint16 `env:"DEBUG_PORT"`
+	HTTPPublicPort  uint16 `env:"HTTP_PUBLIC_PORT"`
+	GRPCPublicPort  uint16 `env:"GRPC_PUBLIC_PORT"`
+	HTTPPrivatePort uint16 `env:"HTTP_PRIVATE_PORT"`
 }
 
 func New() (*Config, error) {
@@ -23,28 +22,4 @@ func New() (*Config, error) {
 	}
 
 	return cfg, nil
-}
-
-func GRPCPort(ctx context.Context) uint16 {
-	cfg, ok := ctx.Value(ctxKey{}).(*Config)
-	if !ok {
-		return 0
-	}
-	return cfg.GRPCPort
-}
-
-func HTTPPort(ctx context.Context) uint16 {
-	cfg, ok := ctx.Value(ctxKey{}).(*Config)
-	if !ok {
-		return 0
-	}
-	return cfg.HTTPPort
-}
-
-func DebugPort(ctx context.Context) uint16 {
-	cfg, ok := ctx.Value(ctxKey{}).(*Config)
-	if !ok {
-		return 0
-	}
-	return cfg.DebugPort
 }

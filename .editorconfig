@@ -12,6 +12,7 @@ indent_size = 2
 
 [*.go]
 ij_go_add_leading_space_to_comments = true
+ij_go_move_all_stdlib_imports_in_one_group = true
 
 [*.{js,ts,vue}]
 indent_style = space

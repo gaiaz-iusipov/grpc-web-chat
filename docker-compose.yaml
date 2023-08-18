@@ -4,9 +4,13 @@ services:
   backend:
     build:
       context: backend
+      args:
+        NAME: backend
+        VERSION: 1.0.0-dev
     ports:
-      - '6001:6001/tcp'
-      - '6060:6060/tcp'
+      - '8000:8000/tcp'
+      - '8001:8001/tcp'
+      - '8002:8002/tcp'
     env_file:
       - backend/.env
 
