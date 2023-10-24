@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, defineEmits } from 'vue'
 
 const text = ref<string>('')
 const isTextEmpty = computed<boolean>(() => '' === text.value)

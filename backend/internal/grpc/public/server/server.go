@@ -2,13 +2,14 @@ package grpcpublicserver
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net"
 	"net/http"
 	"strconv"
 
 	grpcprometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
-	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
@@ -54,14 +55,14 @@ func New(listenPort uint16, controller grpcpublic.Controller) Server {
 func (s Server) Run() error {
 	listener, err := net.Listen("tcp", s.addr)
 	if err != nil {
-		return errors.Wrap(err, "listen addr")
+		return fmt.Errorf("net listen: %w", err)
 	}
 
 	close(s.running)
 
 	err = s.grpcServer.Serve(listener)
 	if err != nil && !errors.Is(err, grpc.ErrServerStopped) {
-		return errors.Wrap(err, "grpc serve")
+		return fmt.Errorf("grpc serve: %w", err)
 	}
 	return nil
 }

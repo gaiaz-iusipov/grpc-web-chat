@@ -1,4 +1,4 @@
-FROM node:lts-alpine3.18 as builder
+FROM node:21.0.0-alpine3.18 as builder
 WORKDIR /app
 COPY . .
 RUN yarn install

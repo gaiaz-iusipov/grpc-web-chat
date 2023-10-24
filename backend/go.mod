@@ -1,6 +1,8 @@
 module github.com/gaiaz-iusipov/grpc-web-chat
 
-go 1.21
+go 1.21.0
+
+toolchain go1.21.3
 
 require (
 	github.com/caarlos0/env/v9 v9.0.0
@@ -8,10 +10,9 @@ require (
 	github.com/go-deeper/app v0.0.0-20230818223208-88bcc30a0b14
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/improbable-eng/grpc-web v0.15.0
-	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.17.0
 	github.com/subosito/gotenv v1.6.0
-	google.golang.org/grpc v1.58.2
+	google.golang.org/grpc v1.59.0
 	google.golang.org/protobuf v1.31.0
 )
 
@@ -28,9 +29,9 @@ require (
 	github.com/prometheus/common v0.44.0 // indirect
 	github.com/prometheus/procfs v0.11.1 // indirect
 	github.com/rs/cors v1.7.0 // indirect
-	golang.org/x/net v0.12.0 // indirect
+	golang.org/x/net v0.14.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect
 	golang.org/x/text v0.12.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20230711160842-782d3b101e98 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d // indirect
 	nhooyr.io/websocket v1.8.6 // indirect
 )

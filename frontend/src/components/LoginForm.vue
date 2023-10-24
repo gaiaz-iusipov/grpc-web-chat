@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, defineEmits } from 'vue'
 
 const text = ref<string>('')
 const isInputEmpty = computed<boolean>(() => '' === text.value)
@@ -10,13 +10,11 @@ function login() {
   emit('login', text.value)
 }
 
-onMounted(() => focus())
-
 const inputRef = ref<HTMLInputElement | null>(null)
 
-const focus = () => {
+onMounted(() => {
   inputRef.value?.focus()
-}
+})
 </script>
 
 <template>
